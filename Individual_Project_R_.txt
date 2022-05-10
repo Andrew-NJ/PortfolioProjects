@@ -1,0 +1,145 @@
+# Project by Andrew Johns
+# This is the exploratory analysis for a CIS 450 Individual Project 
+# The project is to build a model which can predict the top 5 MVP voting recipient 
+# in the MLB MVP voting (minus pitchers).
+# I will use multiple regression analysis on past MLB voting data to train and build
+# the model.
+
+
+# importing al mvp data by year into data frames
+al_2018 = read.csv(file = 'C:/Users/Andrew/OneDrive - Arizona State University/Fall 2021/CIS 450/al_mvp_18.csv')
+al_2018 = al_2018 %>% select(Name, Vote.Pts, WAR, G, AB, R, H, HR, RBI, SB, BB, BA, OBP, SLG, OPS)
+
+al_2019 = read.csv(file = 'C:/Users/Andrew/OneDrive - Arizona State University/Fall 2021/CIS 450/al_mvp_19.csv')
+al_2019 = al_2019 %>% select(Name, Vote.Pts, WAR, G, AB, R, H, HR, RBI, SB, BB, BA, OBP, SLG, OPS)
+
+al_2020 = read.csv(file = 'C:/Users/Andrew/OneDrive - Arizona State University/Fall 2021/CIS 450/al_mvp_20.csv')
+al_2020 = al_2020 %>% select(Name, Vote.Pts, WAR, G, AB, R, H, HR, RBI, SB, BB, BA, OBP, SLG, OPS)
+
+#importing nl mvp data by year into data frames
+nl_2018 = read.csv(file = 'C:/Users/Andrew/OneDrive - Arizona State University/Fall 2021/CIS 450/nl_mvp_18.csv')
+nl_2018 = nl_2018 %>% select(Name, Vote.Pts, WAR, G, AB, R, H, HR, RBI, SB, BB, BA, OBP, SLG, OPS)
+
+nl_2019 = read.csv(file = 'C:/Users/Andrew/OneDrive - Arizona State University/Fall 2021/CIS 450/nl_mvp_19.csv')
+nl_2019 = nl_2019 %>% select(Name, Vote.Pts, WAR, G, AB, R, H, HR, RBI, SB, BB, BA, OBP, SLG, OPS)
+
+nl_2020 = read.csv(file = 'C:/Users/Andrew/OneDrive - Arizona State University/Fall 2021/CIS 450/nl_mvp_20.csv')
+nl_2020 = nl_2020 %>% select(Name, Vote.Pts, WAR, G, AB, R, H, HR, RBI, SB, BB, BA, OBP, SLG, OPS)
+
+#Beginning the Multiple regression analysis exploration.
+reg1 = lm(Vote.Pts ~ WAR, data = nl_2018)
+summary(reg1)
+reg2 = lm(Vote.Pts ~ WAR + H + R + HR + RBI + BA + OBP + SLG + OPS, data = nl_2018)
+summary(reg2)
+reg3 = lm(Vote.Pts ~ WAR + H + R + HR + RBI + BA + OBP + SLG + OPS, data = al_2018)
+summary(reg3)
+reg3 = lm(Vote.Pts ~ WAR + R + RBI, data = al_2018)
+summary(reg3)
+#Testing the first iteration of the model
+al_2018 = al_2018 %>% mutate(est_vote.Pts = -463.852 + (42.9007*WAR) + (2.1798*R) + (.9611*RBI))
+reg4 = lm(Vote.Pts ~ H + R + HR + RBI + BA + OBP + SLG + OPS, data = al_2018)
+summary(reg4)
+plot(reg3)
+# Testing a second iteration
+al_2018 = al_2018 %>% mutate(est_vote.Pts2 = -808.3 + (22.68*WAR) + (.4421*H) + (3.455*R) + (-7.511*HR) + (1.407*RBI) + (-0.0001*AVG) + (24210*OBP) + (24770*SLG) + (-23650*OPS))
+al_2018 = al_2018 %>% mutate(est_vote.Pts2 = -808.3 + (22.68*WAR) + (.4421*H) + (3.455*R) + (-7.511*HR) + (1.407*RBI) + (-0.0001*BA) + (24210*OBP) + (24770*SLG) + (-23650*OPS))
+nl_2018 = nl_2018 %>% select(Name, Vote.Pts, est_vote.Pts, WAR, G, AB, R, H, HR, RBI, SB, BB, OBP, SLG, OPS)
+al_2018 = al_2018 %>% select(Name, Vote.Pts, est_vote.Pts, WAR, G, AB, R, H, HR, RBI, SB, BB, OBP, SLG, OPS)
+nl_2018 = nl_2018 %>% select(Name, est_vote.Pts, Vote.Pts, WAR, G, AB, R, H, HR, RBI, SB, BB, OBP, SLG, OPS)
+al_2018 = al_2018 %>% select(Name, est_vote.Pts, Vote.Pts, WAR, G, AB, R, H, HR, RBI, SB, BB, OBP, SLG, OPS)
+
+nl_2018 = nl_2018 %>% select(- est_vote.Pts2)
+nl_2019 = nl_2019 %>% select(- est_vote.Pts2)
+nl_2019 = nl_2019 %>% select(- est_vote.Pts)
+al_2019 = al_2019 %>% select(- est_vote.Pts2)
+nl_2018["Year"] = 2018
+nl_2019["Year"] = 2019
+al_2019["Year"] = 2019
+al_2018["Year"] = 2018
+
+#Combinging data set to train on a larger date range
+nl_18_19 = rbind(nl_2018, nl_2019)
+al_18_19 = rbind(al_2018, al_2019)
+
+#Running multiple regression on new data sets
+reg = lm(Vote.Pts ~ WAR + R + RBI, data = nl_18_19)
+summary(reg)
+reg_nl = lm(Vote.Pts ~ WAR + R + RBI, data = nl_18_19)
+remove(reg)
+remove(reg_nl)
+reg_nl = lm(Vote.Pts ~ WAR + R + RBI, data = nl_18_19)
+summary(reg_al)
+summary(reg_nl)
+reg_nl2 = lm(Vote.Pts ~ R + H + HR + RBI + SB + BB + BA + OBP + SLG + OPS, data = nl_18_19)
+summary(reg_nl2)
+reg_al2 = lm(Vote.Pts ~ R + H + HR + RBI + SB + BB + BA + OBP + SLG + OPS, data = al_18_19)
+summary(reg_al2)
+reg_al2 = lm(Vote.Pts ~ WAR + R + H + HR + RBI + SB + BB + BA + OBP + SLG + OPS, data = al_18_19)
+summary(reg_al2)
+reg_nl2 = lm(Vote.Pts ~ WAR + R + H + HR + RBI + SB + BB + BA + OBP + SLG + OPS, data = nl_18_19)
+summary(reg_nl2)
+plot(reg_al)
+summary(reg_nl)
+
+#Testing for correlation among variables
+library('ggpubr')
+ggscatter(al_18_19, x = RBI, y = R, add = "reg.line", conf.int = TRUE, cor.coef = TRUE, cor.method = 'pearson', xlab = 'RBI', ylab = 'Runs')
+ggscatter(al_18_19, x = 'RBI', y = 'R', add = "reg.line", conf.int = TRUE, cor.coef = TRUE, cor.method = 'pearson', xlab = 'RBI', ylab = 'Runs')
+ggscatter(al_18_19, x = 'WAR', y = 'RBI', add = "reg.line", conf.int = TRUE, cor.coef = TRUE, cor.method = 'pearson', xlab = 'RBI', ylab = 'Runs')
+ggscatter(al_18_19, x = 'WAR', y = 'R', add = "reg.line", conf.int = TRUE, cor.coef = TRUE, cor.method = 'pearson', xlab = 'RBI', ylab = 'Runs')
+# Trying new model after elimination of highly correleted variables
+al_2018 = al_2018 %>% mutate(est_vote.Pts = -425.6100 + (45.0262*WAR) + (0.8355*R) + (1.8425*RBI))
+al_2018 = al_2018 %>% select(- est_vote.Pts)
+al_2020 = al_2020 %>% mutate(est_vote.Pts = -425.6100 + (45.0262*WAR) + (0.8355*R) + (1.8425*RBI))
+reg_nl2 = lm(Vote.Pts ~ WAR + R, data = nl_18_19)
+summary(reg_nl2)
+reg_al2 = lm(Vote.Pts ~ WAR + R, data = al_18_19)
+summary(reg_al2)
+ggscatter(al_18_19, x = 'WAR', y = 'R', add = "reg.line", conf.int = TRUE, cor.coef = TRUE, cor.method = 'pearson', xlab = 'WAR', ylab = 'Runs')
+ggscatter(al_18_19, x = 'WAR', y = 'RBI', add = "reg.line", conf.int = TRUE, cor.coef = TRUE, cor.method = 'pearson', xlab = 'WAR', ylab = 'Runs')
+ggscatter(al_18_19, x = 'RBI', y = 'R', add = "reg.line", conf.int = TRUE, cor.coef = TRUE, cor.method = 'pearson', xlab = 'RBI', ylab = 'Runs')
+reg_al2 = lm(Vote.Pts ~ WAR + RBI, data = al_18_19)
+summary(reg_al2)
+reg_nl2 = lm(Vote.Pts ~ WAR + RBI, data = nl_18_19)
+summary(reg_nl2)
+plot(reg_nl2)
+plot(reg_al2)
+nl_2020 = nl_2020 %>% mutate(est_vote.Pts =  (45.246*WAR) + (1.495*RBI))
+al_2020 = al_2020 %>% mutate(est_vote.Pts =  (49.1091*WAR) + (2.0934*RBI))
+#Testing for correlation
+ggscatter(al_18_19, x = 'Vote.Pts', y = 'HR', add = "reg.line", conf.int = TRUE, cor.coef = TRUE, cor.method = 'pearson', xlab = 'Vote.Pts', ylab = 'Home Runs')
+ggscatter(al_18_19, x = 'Vote.Pts', y = 'WAR', add = "reg.line", conf.int = TRUE, cor.coef = TRUE, cor.method = 'pearson', xlab = 'Vote.Pts', ylab = 'WAR')
+ggscatter(al_18_19, x = 'Vote.Pts', y = 'OPS', add = "reg.line", conf.int = TRUE, cor.coef = TRUE, cor.method = 'pearson', xlab = 'Vote.Pts', ylab = 'OPS')
+ggscatter(al_18_19, x = 'Vote.Pts', y = 'BA', add = "reg.line", conf.int = TRUE, cor.coef = TRUE, cor.method = 'pearson', xlab = 'Vote.Pts', ylab = 'BA')
+ggscatter(al_18_19, x = 'Vote.Pts', y = 'RBI', add = "reg.line", conf.int = TRUE, cor.coef = TRUE, cor.method = 'pearson', xlab = 'Vote.Pts', ylab = 'RBI')
+ggscatter(al_18_19, x = 'Vote.Pts', y = 'SB', add = "reg.line", conf.int = TRUE, cor.coef = TRUE, cor.method = 'pearson', xlab = 'Vote.Pts', ylab = 'SB')
+ggscatter(al_18_19, x = 'Vote.Pts', y = 'SLG', add = "reg.line", conf.int = TRUE, cor.coef = TRUE, cor.method = 'pearson', xlab = 'Vote.Pts', ylab = 'SLG')
+ggscatter(al_18_19, x = 'Vote.Pts', y = 'OBP', add = "reg.line", conf.int = TRUE, cor.coef = TRUE, cor.method = 'pearson', xlab = 'Vote.Pts', ylab = 'OBP')
+ggscatter(al_18_19, x = 'Vote.Pts', y = 'H', add = "reg.line", conf.int = TRUE, cor.coef = TRUE, cor.method = 'pearson', xlab = 'Vote.Pts', ylab = 'Hits')
+reg_nl2 = lm(Vote.Pts ~ WAR + RBI + OPS, data = nl_18_19)
+summary(reg_nl2)
+ggscatter(al_18_19, x = 'OPS', y = 'WAR', add = "reg.line", conf.int = TRUE, cor.coef = TRUE, cor.method = 'pearson', xlab = 'OPS', ylab = 'WAR')
+reg_nl2 = lm(Vote.Pts ~ R + RBI + OPS, data = nl_18_19)
+summary(reg_nl2)
+reg_nl2 = lm(Vote.Pts ~ R + OPS + BA, data = nl_18_19)
+summary(reg_nl2)
+reg_nl2 = lm(Vote.Pts ~ R + OPS + BA + OBP, data = nl_18_19)
+summary(reg_nl2)
+reg_nl2 = lm(Vote.Pts ~ R + OPS + BA + HR, data = nl_18_19)
+summary(reg_nl2)
+reg_nl2 = lm(Vote.Pts ~ R + OPS + BA, data = nl_18_19)
+summary(reg_nl2)
+# Redoing the correlation tests with correct dependant variable
+ggscatter(al_18_19, x = 'Vote.Pts', y = 'HR', add = "reg.line", conf.int = TRUE, cor.coef = TRUE, cor.method = 'pearson', xlab = 'Vote.Pts', ylab = 'Home Runs')
+ggscatter(al_18_19, x = 'HR', y = 'Vote.Pts', add = "reg.line", conf.int = TRUE, cor.coef = TRUE, cor.method = 'pearson', xlab = 'Vote.Pts', ylab = 'Home Runs')
+ggscatter(al_18_19, x = 'OPS', y = 'Vote.Pts', add = "reg.line", conf.int = TRUE, cor.coef = TRUE, cor.method = 'pearson', xlab = 'Vote.Pts', ylab = 'OPS')
+ggscatter(al_18_19, x = 'WAR', y = 'Vote.Pts', add = "reg.line", conf.int = TRUE, cor.coef = TRUE, cor.method = 'pearson', xlab = 'Vote.Pts', ylab = 'WAR')
+ggscatter(al_18_19, x = 'SLG', y = 'Vote.Pts', add = "reg.line", conf.int = TRUE, cor.coef = TRUE, cor.method = 'pearson', xlab = 'Vote.Pts', ylab = 'WAR')
+ggscatter(al_18_19, x = 'OBP', y = 'Vote.Pts', add = "reg.line", conf.int = TRUE, cor.coef = TRUE, cor.method = 'pearson', xlab = 'Vote.Pts', ylab = 'WAR')
+
+#Testing a second model based on JMP analysis
+nl_2020 = nl_2020 %>% mutate(est_vote.Pts2 =  (.97979 * R) + (1.7414*H) + (2.9085 * SB) + (801.8145 * OPS))
+nl_2021 = nl_2021 %>% mutate(est_vote.Pts2 =  (.97979 * R) + (1.7414*H) + (2.9085 * SB) + (801.8145 * OPS))
+al_2020 = al_2020 %>% mutate(est_vote.Pts2 = (35.7085 * WAR) + (.71352 * R) + (4.6122 * RBI) + (1.2999 * SB) + (306.833 * OPS))
+al_2021 = al_2021 %>% mutate(est_vote.Pts2 = (35.7085 * WAR) + (.71352 * R) + (4.6122 * RBI) + (1.2999 * SB) + (306.833 * OPS))
+
