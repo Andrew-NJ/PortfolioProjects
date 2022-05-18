@@ -82,17 +82,20 @@ plot(reg_al)
 summary(reg_nl)
 
 #Testing for correlation among variables
+
 library('ggpubr')
 ggscatter(al_18_19, x = RBI, y = R, add = "reg.line", conf.int = TRUE, cor.coef = TRUE, cor.method = 'pearson', xlab = 'RBI', ylab = 'Runs')
 ggscatter(al_18_19, x = 'RBI', y = 'R', add = "reg.line", conf.int = TRUE, cor.coef = TRUE, cor.method = 'pearson', xlab = 'RBI', ylab = 'Runs')
 ggscatter(al_18_19, x = 'WAR', y = 'RBI', add = "reg.line", conf.int = TRUE, cor.coef = TRUE, cor.method = 'pearson', xlab = 'RBI', ylab = 'Runs')
 ggscatter(al_18_19, x = 'WAR', y = 'R', add = "reg.line", conf.int = TRUE, cor.coef = TRUE, cor.method = 'pearson', xlab = 'RBI', ylab = 'Runs')
+
 # Trying new model after elimination of highly correleted variables
 al_2018 = al_2018 %>% mutate(est_vote.Pts = -425.6100 + (45.0262*WAR) + (0.8355*R) + (1.8425*RBI))
 al_2018 = al_2018 %>% select(- est_vote.Pts)
 al_2020 = al_2020 %>% mutate(est_vote.Pts = -425.6100 + (45.0262*WAR) + (0.8355*R) + (1.8425*RBI))
 reg_nl2 = lm(Vote.Pts ~ WAR + R, data = nl_18_19)
 summary(reg_nl2)
+
 reg_al2 = lm(Vote.Pts ~ WAR + R, data = al_18_19)
 summary(reg_al2)
 ggscatter(al_18_19, x = 'WAR', y = 'R', add = "reg.line", conf.int = TRUE, cor.coef = TRUE, cor.method = 'pearson', xlab = 'WAR', ylab = 'Runs')
@@ -106,6 +109,7 @@ plot(reg_nl2)
 plot(reg_al2)
 nl_2020 = nl_2020 %>% mutate(est_vote.Pts =  (45.246*WAR) + (1.495*RBI))
 al_2020 = al_2020 %>% mutate(est_vote.Pts =  (49.1091*WAR) + (2.0934*RBI))
+
 #Testing for correlation
 ggscatter(al_18_19, x = 'Vote.Pts', y = 'HR', add = "reg.line", conf.int = TRUE, cor.coef = TRUE, cor.method = 'pearson', xlab = 'Vote.Pts', ylab = 'Home Runs')
 ggscatter(al_18_19, x = 'Vote.Pts', y = 'WAR', add = "reg.line", conf.int = TRUE, cor.coef = TRUE, cor.method = 'pearson', xlab = 'Vote.Pts', ylab = 'WAR')
@@ -118,6 +122,7 @@ ggscatter(al_18_19, x = 'Vote.Pts', y = 'OBP', add = "reg.line", conf.int = TRUE
 ggscatter(al_18_19, x = 'Vote.Pts', y = 'H', add = "reg.line", conf.int = TRUE, cor.coef = TRUE, cor.method = 'pearson', xlab = 'Vote.Pts', ylab = 'Hits')
 reg_nl2 = lm(Vote.Pts ~ WAR + RBI + OPS, data = nl_18_19)
 summary(reg_nl2)
+
 ggscatter(al_18_19, x = 'OPS', y = 'WAR', add = "reg.line", conf.int = TRUE, cor.coef = TRUE, cor.method = 'pearson', xlab = 'OPS', ylab = 'WAR')
 reg_nl2 = lm(Vote.Pts ~ R + RBI + OPS, data = nl_18_19)
 summary(reg_nl2)
@@ -129,6 +134,7 @@ reg_nl2 = lm(Vote.Pts ~ R + OPS + BA + HR, data = nl_18_19)
 summary(reg_nl2)
 reg_nl2 = lm(Vote.Pts ~ R + OPS + BA, data = nl_18_19)
 summary(reg_nl2)
+
 # Redoing the correlation tests with correct dependant variable
 ggscatter(al_18_19, x = 'Vote.Pts', y = 'HR', add = "reg.line", conf.int = TRUE, cor.coef = TRUE, cor.method = 'pearson', xlab = 'Vote.Pts', ylab = 'Home Runs')
 ggscatter(al_18_19, x = 'HR', y = 'Vote.Pts', add = "reg.line", conf.int = TRUE, cor.coef = TRUE, cor.method = 'pearson', xlab = 'Vote.Pts', ylab = 'Home Runs')
