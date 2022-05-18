@@ -6,4 +6,4 @@ This porforlio will always be changing because I am always working to improve my
 While this portforlio may give you a glipmse of my techinacl skills, it cannot demonstrate my people skills or business acumen. 
 I would be happy to connect with you and demonstrate these valuable skills in person or in a virtual meeting.
 Please reach out to me at anicholasjohns@gmail.com if you would like to connect.
-I look forward to meeting and getting to know you!
+I look forward to meeting you!
